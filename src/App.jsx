@@ -1,5 +1,5 @@
 import React from "react";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import LimitedCollection from "./pages/LimitedCollection";
 import AntiqueCollection from "./pages/AntiqueCollection";
@@ -17,7 +17,7 @@ import Login from "./pages/Login";
 
 function App() {
   return (
-    <HashRouter>
+    <>
       <Routes>
         <Route path="/" element={<Onopen />} />
         <Route path="/home" element={<Home />} />
@@ -39,7 +39,7 @@ function App() {
         <Route path="/limited-access" element={<LimitedAccess />} />
         <Route path="/antique-access" element={<AntiqueAccess />} />
       </Routes>
-    </HashRouter>
+    </>
   );
 }
 
