@@ -1,17 +1,13 @@
 import { NavLink, Link } from "react-router-dom";
 import Search from "/Search.svg";
-import Person from "/person.svg";
 import user from "/user.png";
-import Menu from "/menu.svg";
 import Cart from "/shopping-cart.svg";
 import Logo from "/Logo.png";
 import Searchbar from "./Searchbar";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
-  const [Visible, SetVisible] = useState(false);
-
   const { SetShowSearch, GetcartCount } = useContext(ShopContext);
   return (
     <>
@@ -56,7 +52,7 @@ const Navbar = () => {
               <img src={user} className="w-5 ml-2 cursor-pointer" alt="" />
             </Link>
             <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4 pl-10">
-              <div className="flex flex-col gap-2 py-5 px-5 w-40 bg-slate-100 bg-gray-400 rounded-2xl">
+              <div className="flex flex-col gap-2 py-5 px-5 w-40 bg-gray-400 rounded-2xl">
                 <p className="cursor-pointer rounded hover:bg-gray-400 p-1 transition 200ms hover:text-black">
                   My profile
                 </p>
