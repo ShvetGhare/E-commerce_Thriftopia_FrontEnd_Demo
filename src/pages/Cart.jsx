@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import Bin from "/bin.png";
@@ -12,21 +12,19 @@ const Cart = () => {
   const [cartdata, setCartdata] = useState([]);
 
   useEffect(() => {
-    // Convert CartItems into an array of cartData
     const tempData = Object.entries(CartItems).map(([itemId, item]) => ({
       _id: itemId,
       quantity: item.quantity,
       name: item.name || "Unknown Product",
-      image: item.image || "",
+      image: item.image || "/default-image.png", // Provide a default image
       price: item.price || 0,
     }));
 
     setCartdata(tempData);
   }, [CartItems]);
 
-  // Get the current date and time for display
   const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleString(); // Format: "2/9/2025, 4:13:27 PM"
+  const formattedDate = currentDate.toLocaleString();
 
   return (
     <>
@@ -37,46 +35,44 @@ const Cart = () => {
         </div>
         <div>
           {cartdata.length === 0 ? (
-            <p className="text-gray-500 text-center text-xl">
-              Your cart is empty
-            </p>
+            <div className="text-center">
+              <p className="text-gray-500 text-xl">Your cart is empty</p>
+              <img src="/empty-cart.png" alt="Empty Cart" className="mx-auto" />
+            </div>
           ) : (
             cartdata.map((item, index) => (
               <div
                 key={index}
-                className="py-4 border-t border-b-0 text-gray-700 grid-cols-[4fr_0.5fr0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4 flex justify-between items-center"
+                className="py-4 border-t border-b-0 text-gray-700 grid-cols-[4fr_0.5fr0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] gap-4 flex justify-between items-center"
               >
                 <div className="flex items-start gap-6">
-                  {item.image ? (
-                    <img
-                      src={item.image}
-                      className="w-16 ml-4 sm:w-20"
-                      alt={item.name}
-                    />
-                  ) : (
-                    <p>No Image Available</p>
-                  )}
+                  <img
+                    src={item.image}
+                    className="w-16 ml-4 sm:w-20"
+                    alt={item.name}
+                  />
                   <div>
                     <p className="text-xl sm:text-2xl font-bold">
                       <b>{item.name}</b>
                     </p>
                     <div className="flex items-center w-90 justify-between">
                       <p className="text-lg font-semibold sm:text-md">
-                        Price: {currency} {item.price}
+                        Price: {currency}{" "}
+                        {new Intl.NumberFormat().format(item.price)}
+                        {formattedDate}
                       </p>
 
                       <input
-                        onChange={(e) =>
-                          e.target.value === "" || e.target.value === "0"
-                            ? null
-                            : updateQuantity(item._id, Number(e.target.value))
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "" || value === "0" || isNaN(value))
+                            return;
+                          updateQuantity(item._id, Number(value));
+                        }}
                         type="number"
-                        className="border-1 border-gray-400  w-52 h-10 max-w-10 sm:max-w-20 px-1 sm:px-2 py-1 sm:py-2"
-                        name=""
+                        className="border-1 border-gray-400 w-52 h-10 max-w-10 sm:max-w-20 px-1 sm:px-2 py-1 sm:py-2"
                         min={1}
                         defaultValue={item.quantity}
-                        id=""
                       />
                     </div>
                   </div>
