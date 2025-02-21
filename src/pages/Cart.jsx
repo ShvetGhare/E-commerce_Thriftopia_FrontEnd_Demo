@@ -37,7 +37,6 @@ const Cart = () => {
           {cartdata.length === 0 ? (
             <div className="text-center">
               <p className="text-gray-500 text-xl">Your cart is empty</p>
-              <img src="/empty-cart.png" alt="Empty Cart" className="mx-auto" />
             </div>
           ) : (
             cartdata.map((item, index) => (

@@ -1,3 +1,4 @@
+import React from "react";
 import { NavLink, Link } from "react-router-dom";
 import Search from "/Search.svg";
 import user from "/user.png";
