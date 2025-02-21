@@ -29,15 +29,13 @@ const Cart = () => {
   return (
     <>
       <Navbar />
-      <div className="border-t pt-7">
+      <div className="pt-10">
         <div className="text-2xl mb-3 text-center">
           <Title text1={"YOUR"} text2={"CART"} />
         </div>
         <div>
           {cartdata.length === 0 ? (
-            <div className="text-center">
-              <p className="text-gray-500 text-xl">Your cart is empty</p>
-            </div>
+            <div className="text-center"></div>
           ) : (
             cartdata.map((item, index) => (
               <div

@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import Search from "/Search.svg";
 import user from "/user.png";
 import Cart from "/shopping-cart.svg";
@@ -10,69 +10,73 @@ import { ShopContext } from "../context/ShopContext";
 
 const Navbar = () => {
   const { SetShowSearch, GetcartCount } = useContext(ShopContext);
+  const location = useLocation(); // Get the current route
+
   return (
     <>
-      <div className="flex items-center justify-center py-5 font-bold">
-        <NavLink to="/" className="hidden sm:flex gap-15 text-grey-700">
-          <img className="h-15 w-auto" src={Logo} alt="" />
+      <div className="flex items-center justify-between px-10 py-5 font-bold">
+        {/* Logo */}
+        <NavLink to="/" className="flex items-center">
+          <img className="h-12 w-auto" src={Logo} alt="Triftopia Logo" />
         </NavLink>
-        <ul className="hidden sm:flex gap-15 font-light text-[17px] text-grey-700 ml-120">
-          <NavLink to="/home" className="flex flex-col items-center gap-1">
-            <p>Home</p>
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
-          <NavLink
-            to="/limited-access"
-            className="flex flex-col items-center gap-1"
-          >
-            <p>Limited-Access</p>
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
-          <NavLink
-            to="/antique-access"
-            className="flex flex-col items-center gap-1"
-          >
-            <p>Antique-Access</p>
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
-          <NavLink to="/contact" className="flex flex-col items-center gap-1">
-            <p>Contact</p>
-            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
-          </NavLink>
+
+        {/* Navigation Links */}
+        <ul className="flex gap-12 font-light text-[17px] text-gray-700">
+          {["home", "limited-access", "antique-access", "contact"].map(
+            (route) => (
+              <NavLink
+                key={route}
+                to={`/${route}`}
+                className={({ isActive }) =>
+                  `flex flex-col items-center gap-1 transition-all ${
+                    isActive ? "font-semibold text-black" : "text-gray-700"
+                  }`
+                }
+              >
+                <p className="capitalize">{route.replace("-", " ")}</p>
+                <div
+                  className={`w-full h-[2px] mt-1 transition-all ${
+                    location.pathname === `/${route}` ||
+                    (route === "home" && location.pathname === "/")
+                      ? "bg-black"
+                      : "bg-transparent"
+                  }`}
+                />
+              </NavLink>
+            )
+          )}
         </ul>
 
+        {/* Icons Section */}
         <div className="flex items-center gap-6">
           <img
             onClick={() => SetShowSearch(true)}
             src={Search}
-            className="w-5 ml-10 cursor-pointer"
-            alt=""
+            className="w-5 cursor-pointer"
+            alt="Search"
           />
-          <div className="group relative">
+          <div className="relative group">
             <Link to="/login">
-              <img src={user} className="w-5 ml-2 cursor-pointer" alt="" />
+              <img src={user} className="w-5 cursor-pointer" alt="User" />
             </Link>
-            <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4 pl-10">
-              <div className="flex flex-col gap-2 py-5 px-5 w-40 bg-gray-400 rounded-2xl">
-                <p className="cursor-pointer rounded hover:bg-gray-400 p-1 transition 200ms hover:text-black">
-                  My profile
-                </p>
-                <hr className="w-auto border-none h-[0.9px] bg-gray-700 " />
-                <p className="cursor-pointer rounded hover:bg-gray-400 p-1 transition 200ms hover:text-black">
-                  Orders
-                </p>
-                <hr className="w-auto border-none h-[1px] bg-gray-700 " />
-                <p className="cursor-pointer rounded hover:bg-gray-400 p-1 transition 200ms hover:text-black">
-                  Logout
-                </p>
-              </div>
+            <div className="hidden group-hover:block absolute right-0 bg-gray-400 text-black rounded-2xl shadow-lg py-3 px-4 w-40">
+              <p className="cursor-pointer hover:bg-gray-300 p-2 rounded">
+                My Profile
+              </p>
+              <hr className="border-gray-700" />
+              <p className="cursor-pointer hover:bg-gray-300 p-2 rounded">
+                Orders
+              </p>
+              <hr className="border-gray-700" />
+              <p className="cursor-pointer hover:bg-gray-300 p-2 rounded">
+                Logout
+              </p>
             </div>
           </div>
-          <Link to="/cart" className="relative w-5">
-            <img src={Cart} alt="" />
-            {/* Fix the display of the cart count by calling GetcartCount() */}
-            <p className="absolute left-[17px] bottom-[19px] w-3 text-center leading-4 bg-black text-white aspect-square rounded-full text-[10px]">
-              {GetcartCount()} {/* Call GetcartCount() as a function */}
+          <Link to="/cart" className="relative">
+            <img src={Cart} className="w-5" alt="Cart" />
+            <p className="absolute -top-2 -right-2 bg-black text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+              {GetcartCount()}
             </p>
           </Link>
         </div>
