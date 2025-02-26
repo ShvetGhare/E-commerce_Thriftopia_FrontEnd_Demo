@@ -63,7 +63,7 @@ const ShopContextProvider = (props) => {
     toast.success("Item added successfully!");
   };
 
-  // Get total count of items in the cart
+  // Get total count of items in the carta
   const GetcartCount = () => {
     return Object.values(CartItems).reduce(
       (acc, item) => acc + item.quantity,

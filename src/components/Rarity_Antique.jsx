@@ -44,6 +44,7 @@ const Rarity_Antique = () => {
     },
   };
 
+  // console.log(products);
   return (
     <>
       <div className="mt-10"></div>
