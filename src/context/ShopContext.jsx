@@ -1,28 +1,52 @@
 import { createContext, useEffect, useState } from "react";
-import products from "../data/antique_limited_items.json";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
   const currency = "$";
   const delivery_fee = 10;
+  const backEndURL = import.meta.env.VITE_BACKEND_URL;
   const [Search, SetSearch] = useState("");
   const [ShowSearch, SetShowSearch] = useState(false);
   const [CartItems, SetCartItems] = useState({});
+  const [Product, setProduct] = useState([]);
   const navigate = useNavigate();
+
+  // Fetch product data from database
+  const getProductData = async () => {
+    try {
+      const response = await axios.get(
+        `${backEndURL}/api/product/list-product`
+      );
+
+      if (response.data.success) {
+        setProduct(response.data.products);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to fetch products");
+    }
+  };
+
+  useEffect(() => {
+    getProductData();
+  }, []);
 
   // Add item to cart function
   const AddtoCart = (itemId) => {
     if (!itemId) return;
 
     let cartData = structuredClone(CartItems);
-    const product = products.find((p) => p._id === itemId);
+    const product = Product.find((p) => p._id === itemId);
 
     if (!product) return;
     if (cartData[itemId]) {
       cartData[itemId].quantity += 1;
+      // toast.success("Product Added Sucessfully!");
     } else {
       cartData[itemId] = {
         quantity: 1,
@@ -30,6 +54,9 @@ const ShopContextProvider = (props) => {
         name: product.name,
         image: product.image,
       };
+      // console.log("Added");
+
+      // toast.success("Product Added Sucessfully!");
     }
 
     SetCartItems(cartData);
@@ -38,38 +65,28 @@ const ShopContextProvider = (props) => {
 
   // Get total count of items in the cart
   const GetcartCount = () => {
-    let Totalcount = 0;
-    for (const itemId in CartItems) {
-      Totalcount += CartItems[itemId].quantity;
-    }
-    return Totalcount;
+    return Object.values(CartItems).reduce(
+      (acc, item) => acc + item.quantity,
+      0
+    );
   };
 
   // Calculate the total amount of the cart
   const getcartAmount = () => {
-    let totalAmount = 0;
-    for (const itemId in CartItems) {
-      if (CartItems.hasOwnProperty(itemId)) {
-        const iteminfo = products.find(
-          (product) => product._id === Number(itemId)
-        );
-
-        if (iteminfo) {
-          totalAmount += iteminfo.price * CartItems[itemId].quantity;
-        }
-      }
-    }
-    return totalAmount;
+    return Object.entries(CartItems).reduce((total, [itemId, item]) => {
+      const product = Product.find((p) => p._id === itemId);
+      return product ? total + product.price * item.quantity : total;
+    }, 0);
   };
 
   // Update item quantity
-  const updateQuantity = async (itemId, quantity) => {
+  const updateQuantity = (itemId, quantity) => {
     let cartData = structuredClone(CartItems);
 
     if (quantity <= 0) {
-      delete cartData[itemId]; // Remove the item from the cart if quantity is 0 or negative
+      delete cartData[itemId]; // Remove item from cart
     } else {
-      cartData[itemId].quantity = quantity; // Update quantity if valid
+      cartData[itemId].quantity = quantity; // Update quantity
     }
 
     SetCartItems(cartData);
@@ -78,15 +95,13 @@ const ShopContextProvider = (props) => {
   // Remove item from cart
   const removeFromCart = (itemId) => {
     let cartData = structuredClone(CartItems);
-    delete cartData[itemId]; // Remove item from the cart object
+    delete cartData[itemId]; // Remove item
     SetCartItems(cartData);
-    toast.info("Item removed from cart!"); // Show success toast after removal
+    toast.info("Item removed from cart!");
   };
 
-  useEffect(() => {}, [CartItems]);
-
   const value = {
-    products,
+    products: Product, // Use fetched products
     currency,
     delivery_fee,
     Search,
@@ -100,6 +115,7 @@ const ShopContextProvider = (props) => {
     removeFromCart,
     getcartAmount,
     navigate,
+    backEndURL,
   };
 
   return (

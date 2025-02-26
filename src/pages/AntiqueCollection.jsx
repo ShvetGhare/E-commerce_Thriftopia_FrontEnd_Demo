@@ -52,7 +52,7 @@ const LimitedCollection = () => {
 
     if (Category.length > 0) {
       filteredProducts = filteredProducts.filter((item) =>
-        Category.includes(item.rarity_level)
+        Category.includes(item.rarityLevel)
       );
     }
 
@@ -165,7 +165,7 @@ const LimitedCollection = () => {
                 <input
                   type="checkbox"
                   className="w-3"
-                  value="Trusted"
+                  value="trusted"
                   onChange={toggleSubCategory}
                 />{" "}
                 Triftopia-Trusted

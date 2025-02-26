@@ -15,22 +15,21 @@ const Rarity_Antique = () => {
 
   useEffect(() => {
     const Limited_Common = products.filter(
-      (item) => item.category === "Antique" && item.rarity_level === "Common"
+      (item) => item.category === "Antique" && item.rarityLevel === "Common"
     );
     SetCommon(Limited_Common.slice(0, 5));
   }, [products]);
 
   useEffect(() => {
     const Limited_Rare = products.filter(
-      (item) => item.category === "Antique" && item.rarity_level === "Rare"
+      (item) => item.category === "Antique" && item.rarityLevel === "Rare"
     );
     SetRare(Limited_Rare.slice(0, 5));
   }, [products]);
 
   useEffect(() => {
     const Limited_Ultra_Rare = products.filter(
-      (item) =>
-        item.category === "Antique" && item.rarity_level === "Ultra-Rare"
+      (item) => item.category === "Antique" && item.rarityLevel === "Ultra-Rare"
     );
     SetUltraRare(Limited_Ultra_Rare.slice(0, 5));
   }, [products]);

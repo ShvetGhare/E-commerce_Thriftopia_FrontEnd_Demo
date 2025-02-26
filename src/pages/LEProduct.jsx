@@ -8,19 +8,33 @@ import RelatedProducts from "../components/RelatedProducts";
 const LEProduct = () => {
   const { products, currency, AddtoCart } = useContext(ShopContext);
   const { productId } = useParams();
-  const [ProductData, setProductData] = useState(false);
+  const [ProductData, setProductData] = useState(null);
   const [Image, SetImage] = useState("");
 
+  // Fetch product data
   const fetchdata = () => {
-    // Find the product by productId
+    if (!products || products.length === 0) {
+      console.log("No products found in context.");
+      return;
+    }
+
     const data = products.find((item) => item._id == productId);
+
+    if (!data) {
+      console.error(`Product with ID ${productId} not found.`);
+      return;
+    }
+
     setProductData(data);
-    SetImage(data.image);
+    SetImage(data.image || ""); // Prevents undefined errors
   };
 
+  // Run fetchdata only when products are available
   useEffect(() => {
-    fetchdata();
-  }, [productId, products]);
+    if (products.length > 0) {
+      fetchdata();
+    }
+  }, [products, productId]);
 
   return ProductData ? (
     <>
@@ -31,64 +45,66 @@ const LEProduct = () => {
           <div className="flex gap-4">
             {/* Thumbnails */}
             <div className="flex flex-col gap-4">
-              <button className={`w-20 h-20 border rounded-lg overflow-hidden`}>
-                <img src={Image} alt="" />
+              <button className="w-20 h-20 border rounded-lg overflow-hidden">
+                <img src={Image} alt="Product Thumbnail" />
               </button>
             </div>
             {/* Main Image */}
             <div
-              className="flex-1 sticky top-0 z-10 hover:scale-110 hover:translate-x-10 transition duration-500"
+              className="flex-1 sticky top-0 z-10 hover:scale-110 hover:translate-x-10- transition duration-500"
               style={{ top: "10px" }}
             >
-              <img src={Image} className="rounded-lg" alt="" />
+              <img src={Image} className="rounded-lg" alt="Product" />
             </div>
           </div>
 
+          {/* Product Details */}
           <div className="flex flex-col gap-6 pl-10">
             <h1 className="font-medium text-3xl mt-2 ">{ProductData.name}</h1>
             <div className="flex items-center gap-1 mt-2">
-              <img src={Star} alt="" className="w-3.5" />
-              <img src={Star} alt="" className="w-3.5" />
-              <img src={Star} alt="" className="w-3.5" />
-              <img src={Star} alt="" className="w-3.5" />
-              <img src={Star} alt="" className="w-3.5" />
-              <div className="flex items-center gap-2">
-                <p className="text-gray-600 pl-2">(122)</p>
-              </div>
+              <img src={Star} alt="Star" className="w-3.5" />
+              <img src={Star} alt="Star" className="w-3.5" />
+              <img src={Star} alt="Star" className="w-3.5" />
+              <img src={Star} alt="Star" className="w-3.5" />
+              <img src={Star} alt="Star" className="w-3.5" />
+              <p className="text-gray-600 pl-2">(122)</p>
             </div>
-            <p className=" text-3xl font-semibold">
+            <p className="text-3xl font-semibold">
               {currency} {ProductData.price}
             </p>
-            <p className="text-xl">
-              EMI: {currency} {ProductData.emi_option} Vaild upto 24 months!{" "}
-            </p>
+            {ProductData.Emi && (
+              <p className="text-xl">
+                EMI: {currency} {ProductData.Emi} Valid up to 24 months!
+              </p>
+            )}
             <button
-              onClick={() => AddtoCart(ProductData._id)} // Pass the product ID here
+              onClick={() => AddtoCart(ProductData._id)}
               className="bg-black w-40 text-white px-8 py-3 text-sm active:bg-gray-700"
             >
               ADD TO CART
             </button>
             <hr />
             <div className="text-sm text-gray-500 flex flex-col gap-1">
-              <p>100% Original Product.</p>
-              <p>Cash on Delivery is Available with this product.</p>
-              <p>Easy exchange and return policy within 7 days.</p>
+              <p>✅ 100% Original Product.</p>
+              <p>✅ Cash on Delivery is Available.</p>
+              <p>✅ Easy exchange and return policy within 7 days.</p>
             </div>
           </div>
         </div>
-        {/* Description and review sections */}
+
+        {/* Description & Reviews Section */}
         <div className="mt-20 mx-24">
-          <div className="flex ">
-            <b className="border px-5 py-3 text-sm">DESCRIPTION</b>
-            <b className="border px-5 py-3 text-sm">REVIEWS (122)</b>
+          <div className="flex">
+            <b className="border px-5 py-3 text-lg">DESCRIPTION</b>
+            <b className="border px-5 py-3 text-lg">REVIEWS (122)</b>
           </div>
-          <div className="flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500">
+          <div className="flex flex-col gap-4 border px-6 py-6 text-lg text-gray-500">
             <p>{ProductData.description}</p>
-            {/* <p></p> */}
           </div>
-          {/* display similar products */}
         </div>
       </div>
+
+      {/* Related Products */}
       <div className="w-full">
         <RelatedProducts
           category={ProductData.category}
@@ -99,7 +115,9 @@ const LEProduct = () => {
       </div>
     </>
   ) : (
-    <div>Loading...</div>
+    <div className="text-center py-10 text-gray-500">
+      Loading product details...
+    </div>
   );
 };
 
