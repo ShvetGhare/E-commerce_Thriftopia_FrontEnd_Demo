@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import Refund from "/arrow-left-right.svg";
+import { useState, useEffect } from "react";
+import Title from "./Title"; // Ensure the Title component exists
+import Refund from "/arrow-left-right.svg"; // Adjust the path as needed
 import Call from "/contact.svg";
 import Trust from "/book-open-check.svg";
-import Title from "./Title";
-import "../Onopen.css";
 
 const OurPolicy = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -13,56 +12,65 @@ const OurPolicy = () => {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          observer.unobserve(entry.target); // Stop observing once it’s visible
+          observer.disconnect(); // Stop observing after it becomes visible
         }
       },
-      {
-        threshold: 0.1, // Trigger the effect when 10% of the element is in view
-      }
+      { threshold: 0.2 }
     );
 
-    const elements = document.querySelectorAll(".fade-up");
-    elements.forEach((element) => observer.observe(element));
+    const section = document.getElementById("policy-section");
+    if (section) observer.observe(section);
 
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, []);
+
+  const policies = [
+    {
+      img: Refund,
+      title: "Easy Exchange Policy",
+      desc: "Hassle-free exchanges for a smooth shopping experience. We make returns easy and fast!",
+    },
+    {
+      img: Call,
+      title: "24/7 Customer Support",
+      desc: "Our support team is available round-the-clock to assist you with any questions or concerns.",
+    },
+    {
+      img: Trust,
+      title: "100% Best Materials",
+      desc: "We use only the highest quality materials to ensure your satisfaction and long-lasting products.",
+    },
+  ];
 
   return (
     <div className="my-10">
+      {/* Section Title */}
       <div className="text-center py-8 text-3xl">
-        <Title text1={"WHY"} text2={"CHOOSE TRIFTOPIA"} />
-        <p className="w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600">
+        <Title text1="WHY" text2="CHOOSE TRIFTOPIA" />
+        <p className="w-3/4 mx-auto text-sm md:text-base text-gray-600">
           "Crafting clear, actionable policies that drive success and shape a
           stronger future."
         </p>
       </div>
-      <div className="flex flex-col mt-20 flex-wrap sm:flex-row justify-around gap-12 sm:gap-2 text-center py-20 text-xs sm:text-sm md:text-base text-gray-700">
-        <div className={`w-80 fade-up ${isVisible ? "visible" : ""}`}>
-          <img src={Refund} className="w-12 m-auto mb-5" alt="Easy Exchange" />
-          <p className="font-semibold">Easy Exchange Policy</p>
-          <p className="text-gray-400">
-            Hassle-free exchanges for a smooth shopping experience. We make
-            returns easy and fast!
-          </p>
-        </div>
-        <div className={`w-80 fade-up ${isVisible ? "visible" : ""}`}>
-          <img src={Call} className="w-12 m-auto mb-5" alt="24/7 Contact" />
-          <p className="font-semibold">24/7 Customer Support</p>
-          <p className="text-gray-400">
-            Our support team is available round-the-clock to assist you with any
-            questions or concerns.
-          </p>
-        </div>
-        <div className={`w-80 fade-up ${isVisible ? "visible" : ""}`}>
-          <img src={Trust} className="w-12 m-auto mb-5" alt="Best Material" />
-          <p className="font-semibold">100% Best Materials</p>
-          <p className="text-gray-400">
-            We use only the highest quality materials to ensure your
-            satisfaction and long-lasting products.
-          </p>
-        </div>
+
+      {/* Policy Section */}
+      <div
+        id="policy-section"
+        className={`flex flex-col sm:flex-row justify-center items-center gap-12 sm:gap-8 text-center py-20 transition-all duration-700 ease-in-out ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        }`}
+      >
+        {policies.map((item, index) => (
+          <div key={index} className="w-80">
+            <img
+              src={item.img}
+              className="w-16 mx-auto mb-5"
+              alt={item.title}
+            />
+            <p className="font-semibold text-lg">{item.title}</p>
+            <p className="text-gray-500">{item.desc}</p>
+          </div>
+        ))}
       </div>
     </div>
   );

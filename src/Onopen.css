@@ -98,7 +98,6 @@
   filter: blur(5px);
 }
 
-
 /* Onopen.css */
 .fade-up {
   opacity: 0;
@@ -110,4 +109,7 @@
   opacity: 1;
   transform: translateY(0); /* Move to normal position */
 }
-s
+
+body {
+  background-color: white;
+}

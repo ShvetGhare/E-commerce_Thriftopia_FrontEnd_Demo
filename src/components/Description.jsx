@@ -1,67 +1,63 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSpring, animated } from "react-spring";
 import { useInView } from "react-intersection-observer";
 import Antique from "/antique.jpg";
 import Limited from "/limited.jpeg";
 
 const Description = () => {
-  const [inView, setInView] = useState(false);
+  const [inView1, setInView1] = useState(false);
+  const [inView2, setInView2] = useState(false);
 
-  // Animation for scrolling in text
+  const { ref: ref1, inView: observerInView1 } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+  const { ref: ref2, inView: observerInView2 } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  useEffect(() => {
+    setInView1(observerInView1);
+    setInView2(observerInView2);
+  }, [observerInView1, observerInView2]);
+
   const textAnimation1 = useSpring({
-    opacity: inView ? 1 : 0,
-    transform: inView ? "translateX(0)" : "translateX(100px)",
+    opacity: inView1 ? 1 : 0,
+    transform: inView1 ? "translateX(0)" : "translateX(100px)",
     config: { tension: 200, friction: 100 },
   });
 
-  // Animation for scrolling in image
   const imageAnimation1 = useSpring({
-    opacity: inView ? 1 : 0,
-    transform: inView ? "translateX(0)" : "translateX(-100px)",
+    opacity: inView1 ? 1 : 0,
+    transform: inView1 ? "translateX(0)" : "translateX(-100px)",
     config: { tension: 200, friction: 100 },
   });
 
   const textAnimation2 = useSpring({
-    opacity: inView ? 1 : 0,
-    transform: inView ? "translateX(0)" : "translateX(-100px)",
+    opacity: inView2 ? 1 : 0,
+    transform: inView2 ? "translateX(0)" : "translateX(-100px)",
     config: { tension: 200, friction: 100 },
   });
 
-  // Animation for scrolling in image
   const imageAnimation2 = useSpring({
-    opacity: inView ? 1 : 0,
-    transform: inView ? "translateX(0)" : "translateX(100px)",
+    opacity: inView2 ? 1 : 0,
+    transform: inView2 ? "translateX(0)" : "translateX(100px)",
     config: { tension: 200, friction: 100 },
   });
-
-  // Intersection observer to detect scroll position
-  const { ref, inView: observerInView } = useInView({
-    triggerOnce: true, // Trigger only once when the element enters the view
-    threshold: 0.1, // How much of the element should be visible before triggering
-  });
-
-  useEffect(() => {
-    setInView(observerInView);
-  }, [observerInView]);
 
   return (
-    <div className="p-28 pl-35 w-full h-auto grid grid-rows-2 gap-20">
-      <div className="w-[90%] h-112 flex items-start justify-start">
-        <div className="flex justify-start items-end">
-          {/* Animating Image */}
-          <animated.img
-            ref={ref}
-            className="w-full h-112 mr-15"
-            src={Antique}
-            alt="Antique"
-            style={imageAnimation1} // Apply animation to image
-          />
-        </div>
-        <ul className="w-2/5 text-xl grid grid-row-4 gap-6 ml-5">
-          <animated.li
-            className="hover:opacity-100 text-5xl"
-            style={textAnimation1}
-          >
+    <div className="p-10 sm:p-28 w-full h-auto grid grid-rows-2 gap-20">
+      <div className="w-full flex flex-col sm:flex-row items-center sm:items-start">
+        <animated.img
+          ref={ref1}
+          className="w-full sm:w-1/2 h-auto sm:h-112 mb-5 sm:mb-0"
+          src={Antique}
+          alt="Antique"
+          style={imageAnimation1}
+        />
+        <ul className="w-full sm:w-2/5 text-xl grid gap-6 ml-5">
+          <animated.li className="text-5xl" style={textAnimation1}>
             ANTIQUE
           </animated.li>
           <animated.li style={textAnimation1}>
@@ -85,13 +81,16 @@ const Description = () => {
         </ul>
       </div>
 
-      {/* Second */}
-      <div className="w-[90%] h-112 flex items-start justify-start">
-        <ul className="w-2/5 text-xl grid grid-row-4 gap-6 ml-5">
-          <animated.li
-            className="hover:opacity-100 text-5xl"
-            style={textAnimation2}
-          >
+      <div className="w-full flex flex-col sm:flex-row-reverse items-center sm:items-start">
+        <animated.img
+          ref={ref2}
+          className="w-full sm:w-1/2 h-auto sm:h-112 mb-5 sm:mb-0"
+          src={Limited}
+          alt="Limited Edition"
+          style={imageAnimation2}
+        />
+        <ul className="w-full sm:w-2/5 text-xl grid gap-6 ml-5">
+          <animated.li className="text-5xl" style={textAnimation2}>
             LIMITED ACCESS
           </animated.li>
           <animated.li style={textAnimation2}>
@@ -113,16 +112,6 @@ const Description = () => {
             releases.
           </animated.li>
         </ul>
-        <div className="flex justify-start items-end">
-          {/* Animating Image */}
-          <animated.img
-            ref={ref}
-            className="w-full h-112 ml-15"
-            src={Limited}
-            alt="Antique"
-            style={imageAnimation2} // Apply animation to image
-          />
-        </div>
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ const ShopContextProvider = (props) => {
   const [ShowSearch, SetShowSearch] = useState(false);
   const [CartItems, SetCartItems] = useState({});
   const [Product, setProduct] = useState([]);
+  const [token, setToken] = useState("");
   const navigate = useNavigate();
 
   // Fetch product data from database
@@ -100,6 +101,12 @@ const ShopContextProvider = (props) => {
     toast.info("Item removed from cart!");
   };
 
+  useEffect(() => {
+    if (!token && localStorage.getItem("token")) {
+      setToken(localStorage.getItem("token"));
+    }
+  }, []);
+
   const value = {
     products: Product, // Use fetched products
     currency,
@@ -116,6 +123,8 @@ const ShopContextProvider = (props) => {
     getcartAmount,
     navigate,
     backEndURL,
+    setToken,
+    token,
   };
 
   return (

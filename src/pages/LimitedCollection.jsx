@@ -43,7 +43,6 @@ const LimitedCollection = () => {
   const ApplyFilter = useCallback(() => {
     let filteredProducts = Limited_products.slice();
 
-    // Filter by search term, even if ShowSearch is false
     if (Search) {
       filteredProducts = filteredProducts.filter((item) =>
         item.name.toLowerCase().includes(Search.toLowerCase())
@@ -52,7 +51,7 @@ const LimitedCollection = () => {
 
     if (Category.length > 0) {
       filteredProducts = filteredProducts.filter((item) =>
-        Category.includes(item.rarity_level)
+        Category.includes(item.rarityLevel)
       );
     }
 
@@ -62,7 +61,6 @@ const LimitedCollection = () => {
       );
     }
 
-    // Apply sorting after filtering
     switch (sort_type) {
       case "Low-High":
         filteredProducts.sort((a, b) => a.price - b.price);
@@ -81,122 +79,69 @@ const LimitedCollection = () => {
     ApplyFilter();
   }, [ApplyFilter, ShowSearch, Search]);
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 1.0, ease: "easeOut" },
-    },
-  };
-
   return (
     <div>
       <Navbar />
-      <div className="ml-35 flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-0 ">
-        {/* filter options */}
-        <div className="min-w-60">
-          <p
+      <div className="flex flex-col sm:flex-row gap-6 pt-10 px-4 sm:px-10">
+        <div className="sm:w-1/4">
+          <button
             onClick={() => SetShowFilter(!ShowFilter)}
-            className="my-2 text-xl flex items-center cursor-pointer gap-2"
+            className="sm:hidden bg-gray-200 p-2 rounded-md w-full mb-4"
           >
-            FILTERS
-          </p>
-          <img
-            src=""
-            className={`h-3 sm:hidden ${ShowFilter ? "rotate-90" : ""}`}
-            alt=""
-          />
-          {/* Category filter */}
+            Toggle Filters
+          </button>
           <div
-            className={`border border-gray-300 pl-5 py-3 mt-6 ${
-              ShowFilter ? "" : "hidden"
-            } sm:block`}
+            className={`${
+              ShowFilter ? "block" : "hidden"
+            } sm:block border p-4 rounded-md`}
           >
-            <p className="mb-3 text-xl font-medium ">CATEGORIES</p>
-            <div className="flex flex-col gap-2 font-medium text-l text-gray-700">
-              <p className="flex gap-2">
-                <input
-                  type="checkbox"
-                  className="w-3"
-                  value="Common"
-                  onChange={toggleCategory}
-                />{" "}
-                Common
-              </p>
-              <p className="flex gap-2">
-                <input
-                  type="checkbox"
-                  className="w-3"
-                  value="Rare"
-                  onChange={toggleCategory}
-                />{" "}
-                Rare
-              </p>
-              <p className="flex gap-2">
-                <input
-                  type="checkbox"
-                  className="w-3"
-                  value="Ultra-Rare"
-                  onChange={toggleCategory}
-                />{" "}
-                Ultra-Rare
-              </p>
+            <p className="text-lg font-semibold mb-3">CATEGORIES</p>
+            <div className="space-y-2">
+              {["Common", "Rare", "Ultra-Rare"].map((cat) => (
+                <label key={cat} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    value={cat}
+                    onChange={toggleCategory}
+                  />{" "}
+                  {cat}
+                </label>
+              ))}
             </div>
-          </div>
-          {/* Sub-Category */}
-          <div
-            className={`border border-gray-300 pl-5 py-3 mt-6 ${
-              ShowFilter ? "" : "hidden"
-            } sm:block`}
-          >
-            <p className="mb-3 text-xl font-medium ">TYPE</p>
-            <div className="flex flex-col gap-2 font-medium text-l text-gray-700">
-              <p className="flex gap-2">
-                <input
-                  type="checkbox"
-                  className="w-3"
-                  value="bestseller"
-                  onChange={toggleSubCategory}
-                />{" "}
-                Bestseller
-              </p>
-              <p className="flex gap-2">
-                <input
-                  type="checkbox"
-                  className="w-3"
-                  value="Trusted"
-                  onChange={toggleSubCategory}
-                />{" "}
-                Triftopia-Trusted
-              </p>
+            <p className="text-lg font-semibold mt-4 mb-3">TYPE</p>
+            <div className="space-y-2">
+              {["bestseller", "trusted"].map((sub) => (
+                <label key={sub} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    value={sub}
+                    onChange={toggleSubCategory}
+                  />{" "}
+                  {sub.replace(/_/g, " ")}
+                </label>
+              ))}
             </div>
           </div>
         </div>
-
-        {/* Right-side */}
-        <div className="flex-1">
-          <div className="flex justify-between text-balance sm:text-2xl mb-4">
-            <Title text1={"ALL"} text2={"COLLECTIONS"} />
-            {/* Product sort */}
+        <div className="sm:w-3/4">
+          <div className="flex justify-between items-center mb-4">
+            <Title text1="ALL" text2="COLLECTIONS" />
             <select
               onChange={(e) => setsort_type(e.target.value)}
-              className="border-2 border-gray-300 text-sm px-4 mb-4 py-2 mr-10"
+              className="border p-2 rounded-md"
             >
               <option value="Relevant">Sort by: Relevance</option>
               <option value="Low-High">Sort by: Low to High</option>
               <option value="High-Low">Sort by: High to Low</option>
             </select>
           </div>
-          {/* Map products */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mr-10 gap-y-6">
-            {Allproducts.map((item, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {Allproducts.map((item) => (
               <motion.div
-                key={index}
-                variants={itemVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.2 }}
+                key={item._id}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.0, ease: "easeOut" }}
               >
                 <ProductItem
                   id={item._id}
@@ -205,7 +150,7 @@ const LimitedCollection = () => {
                   price={item.price}
                 />
               </motion.div>
-            ))}{" "}
+            ))}
           </div>
         </div>
       </div>
